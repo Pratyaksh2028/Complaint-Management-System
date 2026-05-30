@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Command Center | CMS PRO</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-shield-alt"></i> CMS </h2>
+            <p style="font-size: 0.7rem; color: var(--success); font-weight: bold;">ADMIN PANEL</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/admin-dashboard" class="active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+            <li><a href="/user-management"><i class="fas fa-users"></i> User Management</a></li>
+            <li><a href="/activity-audit"><i class="fas fa-history"></i> Activity Logs</a></li>
+            <li><a href="/system-reports"><i class="fas fa-file-invoice"></i> Reports</a></li>
+            <li><a href="/logout" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1 class="page-title">Admin Dashboard</h1>
+                <p style="color: var(--text-muted);">Overview of all system complaints and user activities.</p>
+            </div>
+            <div class="badge badge-progress" style="padding: 12px 24px; border-radius: var(--border-radius-md);">
+                <i class="fas fa-calendar-alt"></i> <span id="current-date"></span>
+            </div>
+        </header>
+
+        <div class="dashboard-stats">
+            <div class="card stat-card" style="border-left-color: var(--warning);">
+                <h3>Pending Actions</h3>
+                <div class="number">{{ pending_count }}</div>
+            </div>
+            <div class="card stat-card" style="border-left-color: var(--primary-color);">
+                <h3>Total Complaints</h3>
+                <div class="number">{{ complaints|length }}</div>
+            </div>
+            <div class="card stat-card" style="border-left-color: var(--success);">
+                <h3>System Health</h3>
+                <div class="number">Active</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="color: var(--text-dark);"><i class="fas fa-tasks"></i> Manage Complaints</h3>
+                <button class="btn btn-sm" style="background: #f1f5f9; color: var(--primary-color); border: 1px solid var(--primary-color);">
+                    <i class="fas fa-download"></i> Export Data
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Subject</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for complaint in complaints %}
+                        <tr>
+                            <td style="font-weight: 600;">{{ complaint.fullname }}</td>
+                            <td>{{ complaint.subject }}</td>
+                            <td><span style="color: var(--secondary-color);">{{ complaint.category }}</span></td>
+                            <td>
+                                <span class="badge" style="background: {% if complaint.priority == 'Critical' %}#fee2e2; color: #dc2626;{% else %}#f1f5f9; color: var(--text-dark);{% endif %} border: 1px solid #ddd;">
+                                    {{ complaint.priority }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge badge-{{ complaint.status.lower().replace(' ', '') }}">
+                                    {{ complaint.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="/update-complaint/{{ complaint.id }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit"></i> Review
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                No complaints found in the system.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Audit | Admin Access</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-shield-alt"></i> CMS </h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/admin-dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+            <li><a href="/user-management"><i class="fas fa-users"></i> Users</a></li>
+            <li><a href="/activity-audit" class="active"><i class="fas fa-history"></i> Audit Logs</a></li>
+            <li><a href="/logout" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h1 class="page-title">Audit logs</h1>
+            <div class="badge badge-progress" style="padding: 10px 20px;">
+                <i class="fas fa-user-shield"></i> Admin: {{ session['fullname'] }}
+            </div>
+        </header>
+
+        <div class="card">
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: var(--text-dark);"><i class="fas fa-list-ul"></i> Recent System Events</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Tracking all logins, logouts, and complaint updates for security purposes.</p>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Action Performed</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td style="font-weight: 500; color: var(--secondary-color);">
+                                {{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center;">
+                                    <div style="width: 32px; height: 32px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                                        <i class="fas fa-user" style="font-size: 0.8rem; color: var(--primary-color);"></i>
+                                    </div>
+                                    <span style="font-weight: 600;">{{ log.fullname if log.fullname else 'System/Guest' }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge" style="background: #f1f5f9; color: var(--text-dark); border: 1px solid #cbd5e1;">
+                                    {{ log.action_details }}
+                                </span>
+                            </td>
+                            <td>
+                                <code style="background: #f8fafc; padding: 4px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                                    {{ log.ip_address }}
+                                </code>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                No logs found in the database.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

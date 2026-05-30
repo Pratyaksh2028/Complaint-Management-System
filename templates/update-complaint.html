@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Complaint | Admin Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-shield-alt"></i> CMS PRO</h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/admin-dashboard" class="active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+            <li><a href="/user-management"><i class="fas fa-users"></i> Users</a></li>
+            <li><a href="/logout" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header style="margin-bottom: 2rem;">
+            <a href="/admin-dashboard" style="color: var(--primary-color); font-weight: 600; font-size: 0.9rem;">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            <h1 class="page-title" style="margin-top: 10px;">Review Complaint #{{ complaint.id }}</h1>
+        </header>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+            
+            <div class="card">
+                <div style="margin-bottom: 1.5rem; border-bottom: 1px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between;">
+                    <h3 style="color: var(--text-dark);">Issue Details</h3>
+                    <span class="badge badge-{{ complaint.status.lower().replace(' ', '') }}">{{ complaint.status }}</span>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.75rem; text-transform: uppercase; color: var(--secondary-color); font-weight: 700;">Submitted By</label>
+                    <p style="font-weight: 600;">{{ complaint.fullname }}</p>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.75rem; text-transform: uppercase; color: var(--secondary-color); font-weight: 700;">Subject</label>
+                    <p style="font-weight: 600;">{{ complaint.subject }}</p>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.75rem; text-transform: uppercase; color: var(--secondary-color); font-weight: 700;">Category & Priority</label>
+                    <p>{{ complaint.category }} | <span style="color: var(--danger); font-weight: 600;">{{ complaint.priority }}</span></p>
+                </div>
+
+                <div>
+                    <label style="font-size: 0.75rem; text-transform: uppercase; color: var(--secondary-color); font-weight: 700;">Full Description</label>
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: var(--border-radius-md); border: 1px solid #e2e8f0; margin-top: 5px; line-height: 1.6;">
+                        {{ complaint.description }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="border-top: 5px solid var(--primary-color);">
+                <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);"><i class="fas fa-gavel"></i> Take Action</h3>
+                
+                <form action="/update-complaint/{{ complaint.id }}" method="POST">
+                    <div class="form-group">
+                        <label for="status">Update Status</label>
+                        <select name="status" id="status" class="form-control" required>
+                            <option value="Pending" {% if complaint.status == 'Pending' %}selected{% endif %}>Pending</option>
+                            <option value="In Progress" {% if complaint.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                            <option value="Resolved" {% if complaint.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                            <option value="Rejected" {% if complaint.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="admin_remark">Admin Remarks / Solution</label>
+                        <textarea name="admin_remark" id="admin_remark" class="form-control" placeholder="Type the resolution or reason for rejection here..." required>{{ complaint.admin_remark or '' }}</textarea>
+                    </div>
+
+                    <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update & Notify User
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>

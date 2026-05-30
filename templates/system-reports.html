@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Analytics | Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Matches your Dashboard's UI depth and spacing */
+        :root {
+            --bg-light: #f4f7fe;
+            --primary: #5e35b1;
+            --text-dark: #2d3436;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-row:last-child { border: none; }
+
+        .label-group { display: flex; align-items: center; gap: 12px; font-weight: 500; color: #4a5568; }
+
+        .count-tag {
+            background: #6c5ce7;
+            color: white;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .btn-pdf {
+            background: #6c5ce7;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-pdf:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3); }
+
+        @media print {
+            .sidebar, .btn-pdf, .back-nav { display: none !important; }
+            .main-content { margin-left: 0 !important; padding: 0 !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo" style="text-align: center; padding: 20px 0;">
+            <i class="fas fa-shield-alt" style="font-size: 2rem; color: #5e35b1;"></i>
+            <h2 style="margin: 10px 0 0 0; font-size: 1.5rem; letter-spacing: 1px;">CMS</h2>
+            <div style="color: #00b894; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; margin-top: 5px;">Admin Panel</div>
+        </div>
+        
+        <hr style="border: none; border-top: 1px solid #eee; margin: 0 20px 20px 20px;">
+
+        <ul class="nav-links" style="list-style: none; padding: 0 15px;">
+            <li style="margin-bottom: 10px;">
+                <a href="{{ url_for('admin_dashboard') }}" style="display: flex; align-items: center; gap: 12px; padding: 12px 20px; text-decoration: none; color: #636e72; border-radius: 12px;">
+                    <i class="fas fa-th-large"></i> Dashboard
+                </a>
+            </li>
+            <li style="margin-bottom: 10px;">
+                <a href="{{ url_for('user_management') }}" style="display: flex; align-items: center; gap: 12px; padding: 12px 20px; text-decoration: none; color: #636e72; border-radius: 12px;">
+                    <i class="fas fa-users-cog"></i> User Management
+                </a>
+            </li>
+            <li style="margin-bottom: 10px;">
+                <a href="/activity-logs" style="display: flex; align-items: center; gap: 12px; padding: 12px 20px; text-decoration: none; color: #636e72; border-radius: 12px;">
+                    <i class="fas fa-history"></i> Activity Logs
+                </a>
+            </li>
+            <li style="margin-bottom: 10px;">
+                <a href="{{ url_for('system_reports') }}" style="display: flex; align-items: center; gap: 12px; padding: 12px 20px; text-decoration: none; background: #6c5ce7; color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(108, 92, 231, 0.2);">
+                    <i class="fas fa-chart-pie"></i> Reports
+                </a>
+            </li>
+            <li style="margin-top: 50px;">
+                <a href="{{ url_for('logout') }}" style="display: flex; align-items: center; gap: 12px; padding: 12px 20px; text-decoration: none; color: #ff7675;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <main class="main-content" style="margin-left: 260px; padding: 40px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h1 style="font-size: 2.2rem; color: var(--text-dark); margin: 0;">Complaint Analytics</h1>
+                <p style="color: #636e72; margin-top: 8px; font-size: 1.1rem;">Overview of system performance and ticket volume.</p>
+            </div>
+            <button class="btn-pdf" onclick="window.print()">
+                <i class="fas fa-file-export"></i> Generate PDF
+            </button>
+        </div>
+
+        <div class="analytics-grid">
+            <div class="report-card">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-stream" style="color: #6c5ce7;"></i>
+                    <h3 style="margin: 0;">Status Breakdown</h3>
+                </div>
+                <div class="data-list">
+                    {% for stat in status_stats %}
+                    <div class="data-row">
+                        <div class="label-group">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #6c5ce7;"></span>
+                            {{ stat.status.title() }}
+                        </div>
+                        <div class="count-tag">{{ stat.count }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-tags" style="color: #00b894;"></i>
+                    <h3 style="margin: 0;">Issue Categories</h3>
+                </div>
+                <div class="data-list">
+                    {% for cat in category_stats %}
+                    <div class="data-row">
+                        <div class="label-group">
+                            <i class="far fa-folder" style="color: #fab1a0;"></i>
+                            {{ cat.category }}
+                        </div>
+                        <div class="count-tag" style="background: #00b894;">{{ cat.count }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="back-nav" style="margin-top: 40px;">
+            <a href="{{ url_for('admin_dashboard') }}" style="color: #6c5ce7; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-long-arrow-alt-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </main>
+
+</body>
+</html>

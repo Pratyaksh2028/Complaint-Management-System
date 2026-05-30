@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management | CMS </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .user-row:hover {
+            background-color: #f8fbff !important;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-shield-alt"></i> CMS </h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/admin-dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+            <li><a href="/user-management" class="active"><i class="fas fa-users"></i> User Management</a></li>
+            <li><a href="/activity-audit"><i class="fas fa-history"></i> Activity Logs</a></li>
+            <li><a href="/system-reports"><i class="fas fa-file-invoice"></i> Reports</a></li>
+            <li><a href="/logout" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 class="page-title">User Management</h1>
+                <p style="color: var(--text-muted);">View and manage all registered accounts in the system.</p>
+            </div>
+            <div class="card" style="padding: 10px 20px; margin-bottom: 0;">
+                <span style="font-weight: 600; color: var(--primary-color);">Total Users: {{ users|length }}</span>
+            </div>
+        </header>
+
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User Details</th>
+                            <th>Contact Info</th>
+                            <th>Role</th>
+                            <th>Registration Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr class="user-row">
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div class="user-avatar">
+                                        {{ user.fullname[:1].upper() }}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600; color: var(--text-dark);">{{ user.fullname }}</div>
+                                        <div style="font-size: 0.75rem; color: var(--secondary-color);">UID: #{{ user.id }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="font-size: 0.9rem;"><i class="far fa-envelope" style="width: 15px;"></i> {{ user.email }}</div>
+                                <div style="font-size: 0.9rem;"><i class="fas fa-phone-alt" style="width: 15px;"></i> {{ user.phone if user.phone else 'N/A' }}</div>
+                            </td>
+                            <td>
+                                <span class="badge" style="background: #e2e8f0; color: var(--text-dark); border: 1px solid #cbd5e1;">
+                                    {{ user.role.upper() }}
+                                </span>
+                            </td>
+                            <td style="color: var(--text-muted); font-size: 0.9rem;">
+                                {{ user.created_at.strftime('%d %b, %Y') }}
+                            </td>
+                            <td>
+                                <span class="badge" style="background: #d1fae5; color: #065f46;">
+                                    <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 5px;"></i> Active
+                                </span>
+                            </td>
+                <td style="padding: 15px;">
+                    {% if user.id != session['user_id'] and user.id != 1 %}
+                        <a href="{{ url_for('toggle_role', user_id=user.id) }}" 
+                           style="padding: 6px 12px; background: #6c5ce7; color: white; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold; display: inline-block;">
+                            <i class="fas fa-sync-alt"></i> TOGGLE ROLE
+                        </a>
+                    {% else %}
+                        <span style="color: #bbb; font-size: 11px; font-style: italic;">Protected</span>
+                    {% endif %}
+                </td>
+            </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                No registered users found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

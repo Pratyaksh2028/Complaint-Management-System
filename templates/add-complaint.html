@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File a Complaint | CMS PRO</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-shield-alt"></i> CMS </h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/dashboard"><i class="fas fa-th-large"></i> Dashboard</a></li>
+            <li><a href="/add-complaint" class="active"><i class="fas fa-plus-circle"></i> File Complaint</a></li>
+            <li><a href="/notifications"><i class="fas fa-bell"></i> Notifications</a></li>
+            <li><a href="/profile-settings"><i class="fas fa-user-cog"></i> Profile</a></li>
+            <li><a href="/logout" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header style="margin-bottom: 2rem;">
+            <h1 class="page-title">Submit New Complaint</h1>
+            <p style="color: var(--text-muted);">Please provide detailed information so our team can assist you faster.</p>
+        </header>
+
+        <div class="card" style="max-width: 800px;">
+            <form action="/add-complaint" method="POST">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                   <div class="form-group">
+    <label>Complaint Category</label>
+    <select name="category" class="form-control" required 
+            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+        <option value="" disabled selected>Select Category</option>
+        <option value="Software">Software & Applications</option>
+        <option value="Hardware">Hardware Issues</option>
+        <option value="Network">Network & Connectivity</option>
+        <option value="Security">Security & Access</option>
+        <option value="Workstation">Workstation/Office Equipment</option>
+    </select>
+</div>
+
+                    <div class="form-group">
+                        <label for="priority">Urgency Level</label>
+                        <select name="priority" id="priority" class="form-control">
+                            <option value="Low">Low (General Feedback)</option>
+                            <option value="Medium" selected>Medium (Standard)</option>
+                            <option value="High">High (Needs Attention)</option>
+                            <option value="Critical">Critical (Immediate Action)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject / Title</label>
+                    <input type="text" name="subject" id="subject" class="form-control" placeholder="Brief summary of the issue" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Detailed Description</label>
+                    <textarea name="description" id="description" class="form-control" placeholder="Describe the problem in detail..." required></textarea>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="width: auto; min-width: 200px;">
+                        <i class="fas fa-paper-plane" style="margin-right: 8px;"></i> Submit Complaint
+                    </button>
+                    <a href="/dashboard" class="btn" style="width: auto; background: #e2e8f0; color: var(--text-dark);">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+</body>
+</html>

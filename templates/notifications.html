@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | CMS PRO</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .notif-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.3s;
+        }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item.unread {
+            background-color: #f8faff;
+            border-left: 4px solid var(--primary-color);
+        }
+        .notif-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e7ff;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-shield-alt"></i> CMS </h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/dashboard"><i class="fas fa-th-large"></i> Dashboard</a></li>
+            <li><a href="/add-complaint"><i class="fas fa-plus-circle"></i> File Complaint</a></li>
+            <li><a href="/notifications" class="active"><i class="fas fa-bell"></i> Notifications</a></li>
+            <li><a href="/profile-settings"><i class="fas fa-user-cog"></i> Profile</a></li>
+            <li><a href="/logout" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header style="margin-bottom: 2rem;">
+            <h1 class="page-title">Notifications</h1>
+            <p style="color: var(--text-muted);">Stay updated on the progress of your requests.</p>
+        </header>
+
+        <div class="card" style="padding: 0;">
+            <div style="padding: 1.5rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 1.1rem;"><i class="fas fa-stream"></i> Recent Alerts</h3>
+                <span class="badge badge-progress">{{ notifications|length }} Total</span>
+            </div>
+
+            <div class="notif-list">
+                {% for notif in notifications %}
+                <div class="notif-item {% if not notif.is_read %}unread{% endif %}">
+                    <div class="notif-icon">
+                        <i class="fas {% if 'Resolved' in notif.message %}fa-check-circle{% else %}fa-info-circle{% endif %}"></i>
+                    </div>
+                    <div style="flex-grow: 1;">
+                        <p style="color: var(--text-dark); font-weight: 500; margin-bottom: 4px;">{{ notif.message }}</p>
+                        <span style="font-size: 0.8rem; color: var(--secondary-color);">
+                            <i class="far fa-clock"></i> {{ notif.created_at.strftime('%b %d, %I:%M %p') }}
+                        </span>
+                    </div>
+                    {% if not notif.is_read %}
+                        <div style="width: 10px; height: 10px; background: var(--primary-color); border-radius: 50%;"></div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: 5rem 2rem;">
+                    <i class="fas fa-bell-slash" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem;"></i>
+                    <p style="color: var(--text-muted);">No notifications yet. You'll hear from us when your complaint is reviewed!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
